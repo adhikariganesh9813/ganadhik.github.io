@@ -105,3 +105,68 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+// script.js (add this to your existing content)
+
+// IMPORTANT: This URL will be YOUR Render Backend URL.
+// You will get this URL after you deploy your backend in Part 4.
+// For now, you can leave it as a placeholder.
+// Example: const BACKEND_URL = 'https://my-newsletter-backend-xxxx.onrender.com';
+const BACKEND_URL = 'YOUR_RENDER_BACKEND_URL_HERE'; // <--- REPLACE THIS LATER!
+
+const contactForm = document.getElementById('contactForm');
+const senderNameInput = document.getElementById('senderName');
+const senderEmailInput = document.getElementById('senderEmail');
+const senderMessageInput = document.getElementById('senderMessage');
+const formStatusDiv = document.getElementById('formStatus');
+
+if (contactForm) { // Ensure the form exists before attaching listener
+    contactForm.addEventListener('submit', async (event) => {
+        event.preventDefault(); // Prevent the default form submission (page reload)
+
+        formStatusDiv.style.display = 'block'; // Make status div visible
+        formStatusDiv.className = 'message-status'; // Reset classes
+        formStatusDiv.textContent = 'Sending your message...'; // Initial sending message
+
+        const name = senderNameInput.value.trim();
+        const email = senderEmailInput.value.trim();
+        const message = senderMessageInput.value.trim();
+
+        // Basic client-side validation
+        if (!name || !email || !message) {
+            formStatusDiv.className = 'message-status error';
+            formStatusDiv.textContent = 'Please fill in all fields.';
+            return;
+        }
+
+        try {
+            const response = await fetch(`${BACKEND_URL}/api/send-message`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name, email, message })
+            });
+
+            const result = await response.json();
+
+            if (response.ok) { // Status code 200-299
+                formStatusDiv.className = 'message-status success';
+                formStatusDiv.textContent = result.message;
+                // Clear the form fields after successful submission
+                senderNameInput.value = '';
+                senderEmailInput.value = '';
+                senderMessageInput.value = '';
+            } else { // Status code 4xx or 5xx
+                formStatusDiv.className = 'message-status error';
+                formStatusDiv.textContent = result.message || 'An unknown error occurred.';
+            }
+        } catch (error) {
+            console.error('Error sending message to backend:', error);
+            formStatusDiv.className = 'message-status error';
+            formStatusDiv.textContent = 'Network error or problem connecting to backend. Please try again.';
+        }
+    });
+}
+
+// Your existing script.js code (like for hamburger menu, project filters, etc.) should remain above or below this new code.
