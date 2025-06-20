@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // You will get this URL after you deploy your backend in Part 4.
 // For now, you can leave it as a placeholder.
 // Example: const BACKEND_URL = 'https://my-newsletter-backend-xxxx.onrender.com';
-const BACKEND_URL = 'YOUR_RENDER_BACKEND_URL_HERE'; // <--- REPLACE THIS LATER!
+const BACKEND_URL = 'https://ganadhik-github-io-backend.onrender.com'; // <--- REPLACE THIS LATER!
 
 const contactForm = document.getElementById('contactForm');
 const senderNameInput = document.getElementById('senderName');
