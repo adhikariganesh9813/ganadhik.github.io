@@ -198,6 +198,31 @@ section {
     background: #d4dae0;
 }
 
+.btn-secondary1 {
+    display: block; /* Change from inline-block to block */
+    width: fit-content; /* This is crucial to shrink the block to its content size */
+    margin-left: auto;
+    margin-right: auto;
+    background: #e2e6ea;
+    color: var(--text-color);
+    padding: 0.8rem 1.5rem;
+    border-radius: 5px;
+    font-weight: 600;
+    transition: background 0.3s;
+    border: 1px solid #dae0e5;
+}
+
+.btn-secondary1:hover {
+    background: #d4dae0;
+}
+
+.social-icon {
+    width: 24px;   /* Adjust size as needed */
+    height: 24px;  /* Keep width and height same for square icons */
+    margin: 0 5px; /* Add some spacing between icons */
+    vertical-align: middle; /* Helps with alignment if icons are mixed with text */
+}
+
 .social-links {
     margin-top: 2rem;
 }
@@ -423,7 +448,7 @@ footer {
     display: none;
     z-index: 100;
 
-    background-color: rgb(90, 101, 249);
+    background: rgb(0, 17, 149);
     color: white;
     text-decoration: none;  /* Removes underline */
     border: none;
@@ -434,7 +459,7 @@ footer {
 }
 
 #back-to-top:hover {
-    background-color: rgb(0, 30, 254);
+    background-color: var(--primary-color);
 }
 
 /* In your style.css */
