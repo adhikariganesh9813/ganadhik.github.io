@@ -5,6 +5,7 @@
     --secondary-color: #f8f9fa;
     --text-color: #333;
     --background-color: #ffffff;
+    --nav-height: 65px; /* --- ADDED: Variable for navbar height --- */
     --section-padding: 6rem 0;
     --container-width: 90%;
     --max-width: 1200px;
@@ -18,6 +19,7 @@
 
 html {
     scroll-behavior: smooth;
+    scroll-padding-top: var(--nav-height); /* --- IMPROVED: Smooth scroll offset for all sections --- */
 }
 
 body {
@@ -56,7 +58,6 @@ h2.section-title::after {
     border-radius: 2px;
 }
 
-
 section {
     padding: var(--section-padding);
 }
@@ -80,6 +81,7 @@ section {
     top: 0;
     left: 0;
     z-index: 1000;
+    height: var(--nav-height); /* --- ADDED --- */
 }
 
 .nav-logo {
@@ -124,7 +126,6 @@ section {
     align-items: center;
     justify-content: center;
     min-height: 100vh;
-    padding-top: 80px; /* Offset for fixed navbar */
     gap: 2rem;
     flex-wrap: wrap;
     width: var(--container-width);
@@ -199,8 +200,8 @@ section {
 }
 
 .btn-secondary1 {
-    display: block; /* Change from inline-block to block */
-    width: fit-content; /* This is crucial to shrink the block to its content size */
+    display: block; 
+    width: fit-content;
     margin-left: auto;
     margin-right: auto;
     background: #e2e6ea;
@@ -217,10 +218,10 @@ section {
 }
 
 .social-icon {
-    width: 24px;   /* Adjust size as needed */
-    height: 24px;  /* Keep width and height same for square icons */
-    margin: 0 5px; /* Add some spacing between icons */
-    vertical-align: middle; /* Helps with alignment if icons are mixed with text */
+    width: 24px;   
+    height: 24px; 
+    margin: 0 5px;
+    vertical-align: middle;
 }
 
 .social-links {
@@ -237,7 +238,6 @@ section {
 .social-links a:hover {
     color: var(--primary-color);
 }
-
 
 /* About Section */
 #about {
@@ -287,7 +287,6 @@ section {
     font-size: 0.9rem;
     font-weight: 500;
 }
-
 
 /* Projects Section */
 .project-container {
@@ -342,6 +341,17 @@ section {
     gap: 1rem;
 }
 
+/* --- ADDED: Research Section Styling --- */
+.research-content {
+    max-width: 800px;  /* A comfortable reading width for text */
+    margin: 0 auto;    /* Centers the container horizontally */
+    padding: 0 20px;   /* Adds space on the sides for smaller screens */
+    text-align: left;
+}
+
+.research-content p {
+    margin-bottom: 1rem; /* Adds spacing between paragraphs */
+}
 
 /* Contact Section */
 #contact {
@@ -380,7 +390,6 @@ form input:focus, form textarea:focus {
 form textarea {
     resize: vertical;
 }
-
 
 /* Footer */
 footer {
@@ -443,26 +452,29 @@ footer {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    padding: 0.8rem 1rem;
+    width: 50px; /* --- FIX: Set width for a perfect circle --- */
+    height: 50px; /* --- FIX: Set height for a perfect circle --- */
+    line-height: 50px; /* --- FIX: Vertically center text --- */
+    padding: 0; /* --- FIX: Remove padding to use width/height --- */
     border-radius: 50%;
     display: none;
     z-index: 100;
-
-    background: rgb(0, 17, 149);
+    background: var(--primary-color);
     color: white;
-    text-decoration: none;  /* Removes underline */
+    text-decoration: none; 
     border: none;
     font-weight: bold;
     font-size: 1rem;
     text-align: center;
     cursor: pointer;
+    transition: background-color 0.3s;
 }
 
 #back-to-top:hover {
-    background-color: var(--primary-color);
+    background-color: var(--primary-hover-color);
 }
 
-/* In your style.css */
+/* Form Message Status */
 .message-status {
     margin-top: 15px;
     padding: 10px;
@@ -483,7 +495,6 @@ footer {
     border: 1px solid #f5c6cb;
 }
 
-
 /* --- Responsive Design --- */
 
 /* Tablets & Small Desktops */
@@ -495,7 +506,7 @@ footer {
     #hero {
         flex-direction: column;
         text-align: center;
-        padding-top: 120px;
+        padding-top: calc(var(--nav-height) + 40px);
     }
     
     .hero-content {
@@ -526,10 +537,10 @@ footer {
     .nav-links {
         position: fixed;
         left: -100%;
-        top: 65px; /* Height of navbar */
+        top: var(--nav-height); /* Use variable */
         background-color: var(--background-color);
         width: 100%;
-        height: calc(100vh - 65px);
+        height: calc(100vh - var(--nav-height)); /* Use variable */
         flex-direction: column;
         align-items: center;
         justify-content: center;
@@ -549,14 +560,18 @@ footer {
         display: block;
     }
     
-    .hamburger.active .bar:nth-child(2) {
-        opacity: 0;
-    }
+    /* --- FIX: Corrected hamburger 'X' animation for 4 bars --- */
     .hamburger.active .bar:nth-child(1) {
         transform: translateY(8px) rotate(45deg);
     }
+    .hamburger.active .bar:nth-child(2) {
+        opacity: 0;
+    }
     .hamburger.active .bar:nth-child(3) {
         transform: translateY(-8px) rotate(-45deg);
+    }
+    .hamburger.active .bar:nth-child(4) {
+        transform: translateY(-16px) rotate(-45deg); /* Hides 4th bar behind 3rd */
     }
 
     h1 {
