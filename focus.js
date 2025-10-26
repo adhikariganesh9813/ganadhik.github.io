@@ -152,26 +152,44 @@ function initializeFocusMode() {
 
     // Mobile audio unlock: play silent sound on first Start click to enable audio on mobile browsers
     let audioUnlocked = false;
-    function unlockAudio() {
-        if (!audioUnlocked) {
-            if (timerEndSound) {
-                timerEndSound.volume = 0;
-                timerEndSound.play().then(() => {
+    const enableSoundBtn = document.getElementById('enableSound');
+    function unlockAudio(forceShowBtn = false) {
+        if (audioUnlocked) return;
+        let unlockAttempts = 0;
+        function tryUnlock() {
+            let timerPromise = timerEndSound ? timerEndSound.play() : Promise.resolve();
+            let waterPromise = waterBreakSound ? waterBreakSound.play() : Promise.resolve();
+            Promise.all([timerPromise, waterPromise]).then(() => {
+                if (timerEndSound) {
                     timerEndSound.pause();
                     timerEndSound.currentTime = 0;
-                    timerEndSound.volume = 1;
-                }).catch(()=>{});
-            }
-            if (waterBreakSound) {
-                waterBreakSound.volume = 0;
-                waterBreakSound.play().then(() => {
+                }
+                if (waterBreakSound) {
                     waterBreakSound.pause();
                     waterBreakSound.currentTime = 0;
-                    waterBreakSound.volume = 1;
-                }).catch(()=>{});
-            }
-            audioUnlocked = true;
+                }
+                audioUnlocked = true;
+                if (enableSoundBtn) enableSoundBtn.style.display = 'none';
+            }).catch(() => {
+                unlockAttempts++;
+                if (unlockAttempts < 2 && forceShowBtn) {
+                    if (enableSoundBtn) enableSoundBtn.style.display = 'block';
+                }
+            });
         }
+        tryUnlock();
+    }
+
+    // Show enable sound button on mobile if not unlocked
+    if (/Mobi|Android/i.test(navigator.userAgent)) {
+        setTimeout(() => {
+            if (!audioUnlocked && enableSoundBtn) enableSoundBtn.style.display = 'block';
+        }, 1000);
+    }
+    if (enableSoundBtn) {
+        enableSoundBtn.addEventListener('click', function() {
+            unlockAudio(true);
+        });
     }
 
     startButton.addEventListener('click', function() {
