@@ -68,6 +68,8 @@ function initializeFocusMode() {
 
     // Main timer function - handles starting the countdown
     // Added checks to prevent multiple timers and handle empty time
+    // Main timer function - handles starting the countdown
+// Added checks to prevent multiple timers and handle empty time
     function startTimer() {
         if (timerId) return;  // Prevents multiple timers running at once
 
@@ -98,20 +100,21 @@ function initializeFocusMode() {
                 }
             }
 
-            if (timeLeft <= 0) {
-                clearInterval(timerId);
-                timerId = null;
-                statusDisplay.textContent = 'Time\'s up!';
-                startButton.disabled = false;
-                pauseButton.disabled = true;
-                if (timerEndSound) {
-                    timerEndSound.currentTime = 0;
-                    timerEndSound.play().catch(e => console.log('Error playing sound:', e));
-                }
-                timerEndModal.style.display = 'flex';
+        if (timeLeft <= 0) {
+            clearInterval(timerId);
+            timerId = null;
+            statusDisplay.textContent = 'Time\'s up!';
+            startButton.disabled = false;
+            pauseButton.disabled = true;
+            if (timerEndSound) {
+                timerEndSound.currentTime = 0;
+                timerEndSound.play().catch(e => console.log('Error playing sound:', e));
             }
-        }, 1000);
-    }
+            timerEndModal.style.display = 'flex';
+        }
+    }, 1000);
+}
+
 
     // Pause timer
     function pauseTimer() {
