@@ -152,54 +152,93 @@ function initializeFocusMode() {
 
     // Mobile audio unlock: play silent sound on first Start click to enable audio on mobile browsers
     let audioUnlocked = false;
+    // Create an AudioContext to help unlock audio on some mobile browsers (iOS/Chrome)
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
     const enableSoundBtn = document.getElementById('enableSound');
     const soundModal = document.getElementById('soundModal');
     const soundAllowBtn = document.getElementById('soundAllowBtn');
-    function unlockAudio(forceShowBtn = false) {
-        if (audioUnlocked) return;
-        let unlockAttempts = 0;
-        function tryUnlock() {
-            let timerPromise = timerEndSound ? timerEndSound.play() : Promise.resolve();
-            let waterPromise = waterBreakSound ? waterBreakSound.play() : Promise.resolve();
-            Promise.all([timerPromise, waterPromise]).then(() => {
-                if (timerEndSound) {
-                    timerEndSound.pause();
-                    timerEndSound.currentTime = 0;
+        function unlockAudio(event, forceShowBtn = false) {
+            if (audioUnlocked) return;
+            // Ensure an AudioContext exists and try to resume it (required on some mobile browsers)
+            try {
+                if (!audioCtx && AudioContextClass) audioCtx = new AudioContextClass();
+                if (audioCtx && audioCtx.state === 'suspended') {
+                    // resume inside user gesture when possible
+                    if (event) {
+                        audioCtx.resume().then(() => console.log('AudioContext resumed')).catch(() => {});
+                    }
                 }
-                if (waterBreakSound) {
-                    waterBreakSound.pause();
-                    waterBreakSound.currentTime = 0;
+            } catch (e) {
+                console.log('AudioContext not available:', e);
+            }
+
+            let unlockAttempts = 0;
+            function tryUnlock(syncInEvent = false) {
+                // If this was triggered directly by a user event, attempt immediate play inside the handler
+                if (syncInEvent && event) {
+                    try {
+                        if (timerEndSound) { timerEndSound.play(); timerEndSound.pause(); timerEndSound.currentTime = 0; }
+                        if (waterBreakSound) { waterBreakSound.play(); waterBreakSound.pause(); waterBreakSound.currentTime = 0; }
+                        audioUnlocked = true;
+                        if (enableSoundBtn) enableSoundBtn.style.display = 'none';
+                        if (soundModal) soundModal.style.display = 'none';
+                        removeUnlockListeners();
+                        console.log('Audio unlocked synchronously in user event');
+                        return;
+                    } catch (e) {
+                        console.log('Sync unlock failed, will try async:', e);
+                    }
                 }
-                audioUnlocked = true;
-                if (enableSoundBtn) enableSoundBtn.style.display = 'none';
-                if (soundModal) soundModal.style.display = 'none';
-                removeUnlockListeners();
-            }).catch(() => {
-                unlockAttempts++;
-                if (unlockAttempts < 2 && forceShowBtn) {
-                    if (enableSoundBtn) enableSoundBtn.style.display = 'block';
-                }
-                if (soundModal) soundModal.style.display = 'flex';
-            });
+
+                // Fallback: try playing via promises (may still be allowed if called from gesture)
+                let timerPromise = timerEndSound ? timerEndSound.play() : Promise.resolve();
+                let waterPromise = waterBreakSound ? waterBreakSound.play() : Promise.resolve();
+                Promise.all([timerPromise, waterPromise]).then(() => {
+                    if (timerEndSound) {
+                        timerEndSound.pause();
+                        timerEndSound.currentTime = 0;
+                    }
+                    if (waterBreakSound) {
+                        waterBreakSound.pause();
+                        waterBreakSound.currentTime = 0;
+                    }
+                    audioUnlocked = true;
+                    if (enableSoundBtn) enableSoundBtn.style.display = 'none';
+                    if (soundModal) soundModal.style.display = 'none';
+                    removeUnlockListeners();
+                    console.log('Audio unlocked via Promise.play()');
+                }).catch((err) => {
+                    unlockAttempts++;
+                    console.log('Audio unlock attempt failed:', err, 'attempt', unlockAttempts);
+                    if (unlockAttempts < 2 && forceShowBtn) {
+                        if (enableSoundBtn) enableSoundBtn.style.display = 'block';
+                    }
+                    if (soundModal) soundModal.style.display = 'flex';
+                });
+            }
+
+            // Prefer synchronous unlock if we have the actual event
+            tryUnlock(!!event);
+
+            if (soundAllowBtn) {
+                soundAllowBtn.addEventListener('click', function(e) {
+                    unlockAudio(e, true);
+                });
+            }
         }
-        tryUnlock();
-    if (soundAllowBtn) {
-        soundAllowBtn.addEventListener('click', function() {
-            unlockAudio(true);
-        });
-    }
-    }
 
     // Listen for any user interaction to unlock audio
-    function unlockListener() {
-        unlockAudio();
+    function unlockListener(e) {
+        unlockAudio(e);
     }
     function removeUnlockListeners() {
         window.removeEventListener('touchstart', unlockListener);
         window.removeEventListener('click', unlockListener);
         window.removeEventListener('keydown', unlockListener);
     }
-    window.addEventListener('touchstart', unlockListener, { once: true });
+    // Attach handlers to resume/unlock audio on actual user gestures
+    window.addEventListener('touchstart', unlockListener, { once: true, passive: true });
     window.addEventListener('click', unlockListener, { once: true });
     window.addEventListener('keydown', unlockListener, { once: true });
 
@@ -210,13 +249,14 @@ function initializeFocusMode() {
         }, 1000);
     }
     if (enableSoundBtn) {
-        enableSoundBtn.addEventListener('click', function() {
-            unlockAudio(true);
+        enableSoundBtn.addEventListener('click', function(e) {
+            unlockAudio(e, true);
         });
     }
 
-    startButton.addEventListener('click', function() {
-        unlockAudio();
+    // Ensure start button triggers unlock inside the same user event
+    startButton.addEventListener('click', function(e) {
+        unlockAudio(e);
         startTimer();
     });
     pauseButton.addEventListener('click', pauseTimer);
