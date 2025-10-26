@@ -149,8 +149,35 @@ function initializeFocusMode() {
     focusMinutesInput.addEventListener('input', onTimeInputChange);
     focusSecondsInput.addEventListener('input', onTimeInputChange);
 
-    // Control button listeners
-    startButton.addEventListener('click', startTimer);
+
+    // Mobile audio unlock: play silent sound on first Start click to enable audio on mobile browsers
+    let audioUnlocked = false;
+    function unlockAudio() {
+        if (!audioUnlocked) {
+            if (timerEndSound) {
+                timerEndSound.volume = 0;
+                timerEndSound.play().then(() => {
+                    timerEndSound.pause();
+                    timerEndSound.currentTime = 0;
+                    timerEndSound.volume = 1;
+                }).catch(()=>{});
+            }
+            if (waterBreakSound) {
+                waterBreakSound.volume = 0;
+                waterBreakSound.play().then(() => {
+                    waterBreakSound.pause();
+                    waterBreakSound.currentTime = 0;
+                    waterBreakSound.volume = 1;
+                }).catch(()=>{});
+            }
+            audioUnlocked = true;
+        }
+    }
+
+    startButton.addEventListener('click', function() {
+        unlockAudio();
+        startTimer();
+    });
     pauseButton.addEventListener('click', pauseTimer);
     resetButton.addEventListener('click', resetTimer);
 
