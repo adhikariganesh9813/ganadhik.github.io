@@ -170,6 +170,7 @@ function initializeFocusMode() {
                 }
                 audioUnlocked = true;
                 if (enableSoundBtn) enableSoundBtn.style.display = 'none';
+                removeUnlockListeners();
             }).catch(() => {
                 unlockAttempts++;
                 if (unlockAttempts < 2 && forceShowBtn) {
@@ -179,6 +180,19 @@ function initializeFocusMode() {
         }
         tryUnlock();
     }
+
+    // Listen for any user interaction to unlock audio
+    function unlockListener() {
+        unlockAudio();
+    }
+    function removeUnlockListeners() {
+        window.removeEventListener('touchstart', unlockListener);
+        window.removeEventListener('click', unlockListener);
+        window.removeEventListener('keydown', unlockListener);
+    }
+    window.addEventListener('touchstart', unlockListener, { once: true });
+    window.addEventListener('click', unlockListener, { once: true });
+    window.addEventListener('keydown', unlockListener, { once: true });
 
     // Show enable sound button on mobile if not unlocked
     if (/Mobi|Android/i.test(navigator.userAgent)) {
