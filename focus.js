@@ -153,6 +153,8 @@ function initializeFocusMode() {
     // Mobile audio unlock: play silent sound on first Start click to enable audio on mobile browsers
     let audioUnlocked = false;
     const enableSoundBtn = document.getElementById('enableSound');
+    const soundModal = document.getElementById('soundModal');
+    const soundAllowBtn = document.getElementById('soundAllowBtn');
     function unlockAudio(forceShowBtn = false) {
         if (audioUnlocked) return;
         let unlockAttempts = 0;
@@ -170,15 +172,22 @@ function initializeFocusMode() {
                 }
                 audioUnlocked = true;
                 if (enableSoundBtn) enableSoundBtn.style.display = 'none';
+                if (soundModal) soundModal.style.display = 'none';
                 removeUnlockListeners();
             }).catch(() => {
                 unlockAttempts++;
                 if (unlockAttempts < 2 && forceShowBtn) {
                     if (enableSoundBtn) enableSoundBtn.style.display = 'block';
                 }
+                if (soundModal) soundModal.style.display = 'flex';
             });
         }
         tryUnlock();
+    if (soundAllowBtn) {
+        soundAllowBtn.addEventListener('click', function() {
+            unlockAudio(true);
+        });
+    }
     }
 
     // Listen for any user interaction to unlock audio

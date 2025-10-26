@@ -22,6 +22,13 @@
 
     <main class="focus-mode">
         <button id="enableSound" class="btn btn-primary" style="display:none;position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:2000;">Enable Sound</button>
+        <div id="soundModal" class="modal" style="display:none;z-index:3000;">
+            <div class="modal-content">
+                <h2>Enable Sound</h2>
+                <p>To get timer and water break notifications, please tap the button below to allow sound on your device.</p>
+                <button id="soundAllowBtn" class="btn btn-primary">Allow Sound</button>
+            </div>
+        </div>
         <div class="focus-container">
             <section class="timer-section">
                 <h1>Focus Mode</h1>
