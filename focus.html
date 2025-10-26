@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Focus Mode - Ganesh Adhikari</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="focus.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <nav id="navbar">
+            <a href="index.html" class="nav-logo">Ganesh Adhikari</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="focus.html" class="active">Focus Mode</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="focus-mode">
+        <div class="focus-container">
+            <section class="timer-section">
+                <h1>Focus Mode</h1>
+                
+                <div class="timer-display">
+                    <div class="time">25:00</div>
+                    <div class="status">Ready to focus</div>
+                </div>
+
+                <div class="timer-controls">
+                    <button id="start" class="btn btn-primary">
+                        <i class="fas fa-play"></i> Start
+                    </button>
+                    <button id="pause" class="btn btn-secondary" disabled>
+                        <i class="fas fa-pause"></i> Pause
+                    </button>
+                    <button id="reset" class="btn btn-secondary">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
+                </div>
+            </section>
+
+            <section class="settings-section">
+                <div class="settings-group">
+                    <div class="setting">
+                        <label for="focusHours">Hours:</label>
+                        <input type="number" id="focusHours" value="0" min="0" max="24">
+                    </div>
+                    <div class="setting">
+                        <label for="focusMinutes">Minutes:</label>
+                        <input type="number" id="focusMinutes" value="25" min="0" max="59">
+                    </div>
+                    <div class="setting">
+                        <label for="focusSeconds">Seconds:</label>
+                        <input type="number" id="focusSeconds" value="0" min="0" max="59">
+                    </div>
+                </div>
+                <div class="setting">
+                    <label for="waterBreak">Water Break Reminder:</label>
+                    <div class="toggle">
+                        <input type="checkbox" id="waterBreak" checked>
+                        <label for="waterBreak" class="toggle-label"></label>
+                    </div>
+                </div>
+                <div class="water-break-interval" id="waterBreakIntervalSetting">
+                    <h3>Water Break Interval</h3>
+                    <div class="settings-group">
+                        <div class="setting">
+                            <label for="waterBreakHours">Hours:</label>
+                            <input type="number" id="waterBreakHours" value="0" min="0" max="24">
+                        </div>
+                        <div class="setting">
+                            <label for="waterBreakMinutes">Minutes:</label>
+                            <input type="number" id="waterBreakMinutes" value="20" min="0" max="59">
+                        </div>
+                        <div class="setting">
+                            <label for="waterBreakSeconds">Seconds:</label>
+                            <input type="number" id="waterBreakSeconds" value="0" min="0" max="59">
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div id="waterBreakModal" class="modal">
+                <div class="modal-content">
+                    <h2>Time for a Water Break! 💧</h2>
+                    <p>Take a moment to hydrate yourself.</p>
+                    <button id="drank" class="btn btn-primary">
+                        <i class="fas fa-check"></i> I Drank Water
+                    </button>
+                </div>
+            </div>
+            <div id="timerEndModal" class="modal">
+                <div class="modal-content">
+                    <h2>Time's Up! ⏰</h2>
+                    <p>Your focus session has ended.</p>
+                    <button id="closeTimer" class="btn btn-primary">
+                        <i class="fas fa-times"></i> Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Sound effects for timer end and water break notifications 
+         Using MP3 format for better browser compatibility -->
+    <audio id="timerEndSound" preload="auto">
+        <source src="sounds/timer-end.mp3" type="audio/mp3">
+    </audio>
+    <audio id="waterBreakSound" preload="auto">
+        <source src="sounds/water-break.mp3" type="audio/mp3">
+    </audio>
+
+    <script src="focus.js"></script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-/* General Styling & Variables */
+/* My main color palette and layout variables */
 :root {
     --primary-color: #007BFF;
     --primary-hover-color: #0056b3;
@@ -68,7 +68,7 @@ section {
     margin: 0 auto;
 }
 
-/* Header & Navigation */
+/* Navbar styles - fixed at the top, with shadow for depth */
 #navbar {
     display: flex;
     justify-content: space-between;
@@ -120,7 +120,7 @@ section {
     transition: all 0.3s ease-in-out;
 }
 
-/* Hero Section */
+/* Hero section: My intro and profile image */
 #hero {
     display: flex;
     align-items: center;
@@ -239,7 +239,7 @@ section {
     color: var(--primary-color);
 }
 
-/* About Section */
+/* About section: My background and skills */
 #about {
     background-color: var(--secondary-color);
 }
@@ -288,7 +288,7 @@ section {
     font-weight: 500;
 }
 
-/* Projects Section */
+/* Projects section: Card layout for my work */
 .project-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
@@ -341,7 +341,7 @@ section {
     gap: 1rem;
 }
 
-/* --- ADDED: Research Section Styling --- */
+/* Research section: For my academic work */
 .research-content {
     max-width: 800px;  /* A comfortable reading width for text */
     margin: 0 auto;    /* Centers the container horizontally */
@@ -353,7 +353,7 @@ section {
     margin-bottom: 1rem; /* Adds spacing between paragraphs */
 }
 
-/* Contact Section */
+/* Contact section: Simple form and info */
 #contact {
     background-color: var(--secondary-color);
 }
@@ -391,7 +391,7 @@ form textarea {
     resize: vertical;
 }
 
-/* Footer */
+/* Footer: Copyright and site info */
 footer {
     text-align: center;
     padding: 2rem;
@@ -399,7 +399,7 @@ footer {
     color: #fff;
 }
 
-/* --- Additions for New JS Functionality --- */
+/* Extra styles for JS features (scroll reveal, nav highlight, etc.) */
 
 /* Scroll Reveal Animations */
 .reveal {
@@ -495,7 +495,7 @@ footer {
     border: 1px solid #f5c6cb;
 }
 
-/* --- Responsive Design --- */
+/* Responsive tweaks for tablets and mobile - I want it to look good everywhere! */
 
 /* Tablets & Small Desktops */
 @media (max-width: 992px) {

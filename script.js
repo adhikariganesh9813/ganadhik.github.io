@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- 1. RESPONSIVE HAMBURGER MENU ---
+    // Mobile menu setup - making the site responsive
+    // Added this after testing on my phone
     const hamburger = document.querySelector('.hamburger');
     const navLinks = document.querySelector('.nav-links');
     const links = document.querySelectorAll('.nav-links li a');
@@ -29,7 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- 3. SCROLL REVEAL ANIMATIONS ---
+    // Adding some nice fade-in effects when scrolling
+    // Makes the page feel more dynamic and modern
     const revealElements = document.querySelectorAll('section, .project-card, .about-content');
     
     const revealObserver = new IntersectionObserver((entries, observer) => {

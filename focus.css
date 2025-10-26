@@ -1,0 +1,255 @@
+/* CSS Variables */
+:root {
+    --text-color: #2c3e50;
+    --gradient-primary: linear-gradient(135deg, #4b6cb7 0%, #182848 100%);
+    --secondary-color: #f8f9fa;
+}
+
+/* Focus Mode Styles */
+.focus-mode {
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
+}
+
+.focus-container {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.timer-section {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    flex: 1;
+    text-align: center;
+}
+
+.settings-section {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    flex: 1;
+    max-width: 500px;
+}
+
+.timer-section h1 {
+    margin-bottom: 30px;
+    color: var(--text-color);
+}
+
+.timer-display {
+    margin: 30px 0;
+    padding: 30px;
+    border-radius: 15px;
+    background: var(--gradient-primary);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 200px;
+}
+
+.timer-display .time {
+    font-size: 4.5rem;
+    font-weight: 700;
+    font-family: 'Poppins', monospace;
+    margin: 15px 0;
+    letter-spacing: 2px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.timer-display .status {
+    font-size: 1.2rem;
+    opacity: 0.9;
+    margin-top: 15px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.timer-controls {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin: 30px 0;
+}
+
+.settings-section {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.settings-section h2,
+.settings-section h3 {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    margin: 15px 0 10px 0;
+    text-align: left;
+}
+
+.settings-section h2 {
+    font-size: 1.4rem;
+    margin-bottom: 25px;
+}
+
+.water-break-interval {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.break-settings {
+    margin-top: 30px;
+    padding: 20px;
+    background: var(--secondary-color);
+    border-radius: 10px;
+}
+
+.water-break-toggle {
+    margin-bottom: 20px;
+}
+
+.settings-group {
+    display: flex;
+    gap: 15px;
+    justify-content: space-between;
+    margin: 15px 0;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.setting {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.setting label {
+    font-size: 0.9rem;
+    color: var(--text-color);
+}
+
+.setting input[type="number"] {
+    width: 70px;
+    padding: 8px;
+    border: 2px solid var(--primary-color);
+    border-radius: 5px;
+    font-size: 1rem;
+    text-align: center;
+}
+
+/* Toggle Switch */
+.toggle {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.toggle input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-label {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.toggle-label:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .toggle-label {
+    background-color: var(--primary-color);
+}
+
+input:checked + .toggle-label:before {
+    transform: translateX(26px);
+}
+
+/* Water Break Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+#timerEndModal .modal-content {
+    background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
+    color: white;
+}
+
+#timerEndModal h2 {
+    color: white;
+    margin-bottom: 15px;
+}
+
+#timerEndModal p {
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 20px;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+}
+
+.modal-content h2 {
+    margin-bottom: 15px;
+    color: var(--text-color);
+}
+
+.modal-content p {
+    margin-bottom: 20px;
+    color: var(--text-light);
+}
+
+/* Button States */
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

@@ -1,0 +1,17 @@
+{
+  "name": "my-newsletter-backend",
+  "version": "1.0.0",
+  "description": "My Node.js backend for handling contact form emails (deployed on Render)",
+  "main": "server.js", 
+  "scripts": {
+    "start": "node server.js" 
+  },
+  "keywords": ["node", "express", "nodemailer", "backend", "render"], 
+  "author": "Ganesh Adhikari", 
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "nodemailer": "^6.9.14"
+  }
+}

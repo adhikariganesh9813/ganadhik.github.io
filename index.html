@@ -4,20 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Name - Personal Portfolio</title>
+    <!-- My main stylesheet for the whole site -->
     <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts: Poppins, because it looks clean and modern -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <script src="https://kit.fontawesome.com/your-fontawesome-kit.js" crossorigin="anonymous"></script> </head>
+    <!-- Font Awesome for icons (social, nav, etc.) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> 
+    <!-- ...existing code... -->
 <body>
 
+    <!-- Navbar: My name and navigation links. Hamburger for mobile. -->
     <header>
         <nav id="navbar">
             <a href="#" class="nav-logo">Ganesh Adhikari</a>
-            <ul class="nav-links">
-                <li><a href="#about">About</a></li>
-                <li><a href="#projects">Projects</a></li>
-                <li><a href="#research">Research</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
+            <div class="nav-links">
+                <a href="#about">About</a>
+                <a href="#projects">Projects</a>
+                <a href="#research">Research</a>
+                <a href="#contact">Contact</a>
+                <a href="focus.html">Focus Mode</a>
+            </div>
             <div class="hamburger">
                 <span class="bar"></span>
                 <span class="bar"></span>
@@ -28,6 +34,7 @@
     </header>
 
     <main>
+        <!-- Hero section: My intro, tagline, and LinkedIn -->
         <section id="hero">
             <div class="hero-content">
                 <h1>Hi, I'm <span class="highlight">Ganesh Adhikari</span></h1>
@@ -40,7 +47,7 @@
                 <a href="#projects" class="btn">View My Work</a>
                 <div class="social-links">
                     <p>Connect with me @ LinkedIn
-                        <a href="www.linkedin.com/in/ganesh-adhikari-148918101" target="_blank" aria-label="LinkedIn">
+                        <a href="https://www.linkedin.com/in/ganesh-adhikari-148918101" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
                             <img src="LinkedIn_icon.png" alt="LinkedIn Icon" class="social-icon">
                         </a>
                     </p>
@@ -51,6 +58,7 @@
             </div>
         </section>
 
+        <!-- About section: My background, interests, and skills -->
         <section id="about">
             <h2 class="section-title">About Me</h2>
             <div class="about-content">
@@ -90,9 +98,11 @@
             </div>
         </section>
 
+        <!-- Projects section: Some of my favorite work -->
         <section id="projects">
             <h2 class="section-title">My Projects</h2>
 
+            <!-- Filter buttons for project categories -->
             <div id="project-filters">
                 <button class="filter-btn active" data-filter="all">All</button>
                 <button class="filter-btn" data-filter="PcApps">PC Apps</button>
@@ -101,6 +111,7 @@
             </div>
 
             <div class="project-container">
+                <!-- To Do List App (PC) -->
                 <div class="project-card" data-category="PcApps">
                     <img src="toDoList.png" alt="Screenshot of Project One">
                     <div class="project-info">
@@ -113,6 +124,7 @@
                     </div>
                 </div>
 
+                <!-- Data Cleaning Project -->
                 <div class="project-card" data-category="DataProjects">
                     <img src="data_pj_img1.png" alt="Screenshot of Project Two">
                     <div class="project-info">
@@ -124,6 +136,7 @@
                     </div>
                 </div>
 
+                <!-- Other Projects (Github) -->
                 <div class="project-card" data-category="OtherProjects">
                     <img src="other_pj_img1.png" alt="Screenshot of Project Three">
                     <div class="project-info">
@@ -137,9 +150,9 @@
             </div>
         </section>
 
+        <!-- Research section: My academic work and findings -->
         <section id="research">
             <h2 class="section-title">Research</h2>
-            
             <div class="research-content">
                 <p><strong>Title:</strong> Digital Marketing and Psychological Aspects of Consumer Buying Behavior</p>
                 <p><strong>Abstract</strong></p>
@@ -148,16 +161,21 @@
             </div> 
         </section>
 
+        <!-- Contact section: For anyone who wants to reach out -->
         <section id="contact">
             <h2 class="section-title">Get In Touch</h2>
             <div class="contact-content">
                 <p>I'm currently open to new opportunities and collaborations. Feel free to send me a message!</p>
-                <form id="contactForm"> <div class="form-group">
-                        <input type="text" id="senderName" name="name" placeholder="Your Name" required> </div>
+                <form id="contactForm"> 
                     <div class="form-group">
-                        <input type="email" id="senderEmail" name="email" placeholder="Your Email" required> </div>
+                        <input type="text" id="senderName" name="name" placeholder="Your Name" required> 
+                    </div>
                     <div class="form-group">
-                        <textarea id="senderMessage" name="message" placeholder="Your Message" rows="5" required></textarea> </div>
+                        <input type="email" id="senderEmail" name="email" placeholder="Your Email" required> 
+                    </div>
+                    <div class="form-group">
+                        <textarea id="senderMessage" name="message" placeholder="Your Message" rows="5" required></textarea> 
+                    </div>
                     <button type="submit" class="btn">Send Message</button>
                 </form>
                 <div id="formStatus" style="margin-top: 15px; padding: 10px; border-radius: 4px; display: none;"></div>
@@ -165,9 +183,11 @@
         </section>
     </main>
 
+    <!-- Back to top button for easy navigation -->
     <a href="#" id="back-to-top" class="btn">Back to Top</a>
 
 
+    <!-- Footer: Copyright info -->
     <footer>
         <p>&copy; 2025 Ganesh. All Rights Reserved.</p>
     </footer>
