@@ -2,7 +2,7 @@
 let timeLeft = 0;          // Tracks remaining time in seconds
 let timerId = null;        // For storing the timer interval ID
 let deadline = null;       // Absolute timestamp (ms) when the timer should hit zero
-let lastWaterBreakTime = 0;// Keeps track of last water break time
+let lastWaterBreakMs = 0;  // Keeps track of last water break time in milliseconds
 
 function initializeFocusMode() {
     // Getting all the elements I need to control
@@ -96,8 +96,8 @@ function initializeFocusMode() {
         pauseButton.disabled = false;
         statusDisplay.textContent = 'Focus time!';
         setInputsEnabled(false);
-        if (lastWaterBreakTime === 0) {
-            lastWaterBreakTime = Math.floor(Date.now() / 1000);
+        if (lastWaterBreakMs === 0) {
+            lastWaterBreakMs = Date.now();
         }
 
         // Use a shorter tick to improve accuracy, but only update display when whole second changes
@@ -112,12 +112,11 @@ function initializeFocusMode() {
             }
 
             // Check for water break (skip if interval is zero)
-            const currentTime = Math.floor(now / 1000);
-            const wbInterval = calculateWaterBreakInterval();
-            if (waterBreakToggle.checked && wbInterval > 0 && timeLeft > 0 &&
-                (currentTime - lastWaterBreakTime) >= wbInterval) {
+            const wbIntervalSec = calculateWaterBreakInterval();
+            if (waterBreakToggle.checked && wbIntervalSec > 0 && timeLeft > 0 &&
+                (now - lastWaterBreakMs) >= (wbIntervalSec * 1000)) {
                 pauseTimer();
-                lastWaterBreakTime = currentTime;
+                lastWaterBreakMs = now;
                 showWaterBreakModal();
                 return;
             }
@@ -167,7 +166,7 @@ function initializeFocusMode() {
         startButton.disabled = false;
         pauseButton.disabled = true;
         statusDisplay.textContent = 'Ready to focus';
-        lastWaterBreakTime = 0;
+        lastWaterBreakMs = 0;
         setInputsEnabled(true);
     }
 
@@ -309,7 +308,8 @@ function initializeFocusMode() {
             waterBreakSound.currentTime = 0;
         }
         waterBreakModal.style.display = 'none';
-        // Recreate deadline based on current timeLeft and resume
+        // Reset the water break baseline and recreate deadline based on current timeLeft and resume
+        lastWaterBreakMs = Date.now();
         deadline = null;
         startTimer();  // Resume the timer
     });
