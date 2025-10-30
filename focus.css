@@ -63,7 +63,7 @@
         box-sizing: border-box;
     }
     .timer-display .time {
-        font-size: 1.1rem;
+        font-size: 1.05rem;
         word-break: break-all;
         margin: 6px 0;
     }
@@ -99,6 +99,17 @@
         width: 100%;
         min-width: 0;
         box-sizing: border-box;
+    }
+}
+
+/* Extra-small phones: make the clock a bit smaller */
+@media (max-width: 420px) {
+    .timer-display {
+        min-height: 40px;
+        padding: 3px;
+    }
+    .timer-display .time {
+        font-size: 0.95rem;
     }
 }
 

@@ -1,6 +1,7 @@
 // Setting up initial variables for the timer
 let timeLeft = 0;          // Tracks remaining time in seconds
 let timerId = null;        // For storing the timer interval ID
+let deadline = null;       // Absolute timestamp (ms) when the timer should hit zero
 let lastWaterBreakTime = 0;// Keeps track of last water break time
 
 function initializeFocusMode() {
@@ -68,52 +69,75 @@ function initializeFocusMode() {
 
     // Main timer function - handles starting the countdown
     // Added checks to prevent multiple timers and handle empty time
-    // Main timer function - handles starting the countdown
-// Added checks to prevent multiple timers and handle empty time
-    function startTimer() {
-        if (timerId) return;  // Prevents multiple timers running at once
+    // Disable/enable inputs while running
+    function setInputsEnabled(enabled) {
+        [focusHoursInput, focusMinutesInput, focusSecondsInput,
+         waterBreakHoursInput, waterBreakMinutesInput, waterBreakSecondsInput,
+         waterBreakToggle].forEach(el => { if (el) el.disabled = !enabled; });
+    }
 
-        // If timer is at 0, grab the time from input fields
+    // Main timer function - handles starting/resuming the countdown (deadline-based)
+    function startTimer() {
+        if (timerId) return;  // Prevent multiple timers
+
+        // Initialize time if needed
         if (timeLeft <= 0) {
             timeLeft = calculateTotalSeconds();
+        }
+        if (timeLeft <= 0) return; // nothing to do
+
+        // Compute or recompute deadline
+        if (!deadline) {
+            deadline = Date.now() + (timeLeft * 1000);
         }
 
         // Update UI state
         startButton.disabled = true;
         pauseButton.disabled = false;
         statusDisplay.textContent = 'Focus time!';
-        lastWaterBreakTime = Math.floor(Date.now() / 1000);  // Track when we started
-
-        timerId = setInterval(() => {
-            if (timeLeft > 0) {
-                timeLeft--;
-                updateDisplay();
-
-                // Check for water break
-                const currentTime = Math.floor(Date.now() / 1000);
-                if (waterBreakToggle.checked && 
-                    timeLeft > 0 && 
-                    currentTime - lastWaterBreakTime >= calculateWaterBreakInterval()) {
-                    pauseTimer();
-                    lastWaterBreakTime = currentTime;
-                    showWaterBreakModal();
-                }
-            }
-
-        if (timeLeft <= 0) {
-            clearInterval(timerId);
-            timerId = null;
-            statusDisplay.textContent = 'Time\'s up!';
-            startButton.disabled = false;
-            pauseButton.disabled = true;
-            if (timerEndSound) {
-                timerEndSound.currentTime = 0;
-                timerEndSound.play().catch(e => console.log('Error playing sound:', e));
-            }
-            timerEndModal.style.display = 'flex';
+        setInputsEnabled(false);
+        if (lastWaterBreakTime === 0) {
+            lastWaterBreakTime = Math.floor(Date.now() / 1000);
         }
-    }, 1000);
-}
+
+        // Use a shorter tick to improve accuracy, but only update display when whole second changes
+        timerId = setInterval(() => {
+            const now = Date.now();
+            const remainingMs = Math.max(0, deadline - now);
+            const nextTimeLeft = Math.max(0, Math.ceil(remainingMs / 1000));
+
+            if (nextTimeLeft !== timeLeft) {
+                timeLeft = nextTimeLeft;
+                updateDisplay();
+            }
+
+            // Check for water break (skip if interval is zero)
+            const currentTime = Math.floor(now / 1000);
+            const wbInterval = calculateWaterBreakInterval();
+            if (waterBreakToggle.checked && wbInterval > 0 && timeLeft > 0 &&
+                (currentTime - lastWaterBreakTime) >= wbInterval) {
+                pauseTimer();
+                lastWaterBreakTime = currentTime;
+                showWaterBreakModal();
+                return;
+            }
+
+            if (remainingMs <= 0) {
+                clearInterval(timerId);
+                timerId = null;
+                deadline = null;
+                statusDisplay.textContent = 'Time\'s up!';
+                startButton.disabled = false;
+                pauseButton.disabled = true;
+                setInputsEnabled(true);
+                if (timerEndSound) {
+                    timerEndSound.currentTime = 0;
+                    timerEndSound.play().catch(e => console.log('Error playing sound:', e));
+                }
+                timerEndModal.style.display = 'flex';
+            }
+        }, 250);
+    }
 
 
     // Pause timer
@@ -121,21 +145,30 @@ function initializeFocusMode() {
         if (!timerId) return;
         clearInterval(timerId);
         timerId = null;
+        // Recompute remaining time precisely based on deadline
+        if (deadline) {
+            const remainingMs = Math.max(0, deadline - Date.now());
+            timeLeft = Math.max(0, Math.ceil(remainingMs / 1000));
+        }
+        deadline = null;
         startButton.disabled = false;
         pauseButton.disabled = true;
         statusDisplay.textContent = 'Paused';
+        setInputsEnabled(true);
     }
 
     // Reset timer
     function resetTimer() {
         clearInterval(timerId);
         timerId = null;
+        deadline = null;
         timeLeft = calculateTotalSeconds();
         updateDisplay();
         startButton.disabled = false;
         pauseButton.disabled = true;
         statusDisplay.textContent = 'Ready to focus';
         lastWaterBreakTime = 0;
+        setInputsEnabled(true);
     }
 
     // Event listeners for inputs
@@ -276,6 +309,8 @@ function initializeFocusMode() {
             waterBreakSound.currentTime = 0;
         }
         waterBreakModal.style.display = 'none';
+        // Recreate deadline based on current timeLeft and resume
+        deadline = null;
         startTimer();  // Resume the timer
     });
 
