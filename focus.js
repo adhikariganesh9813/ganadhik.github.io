@@ -3,6 +3,8 @@ let timeLeft = 0;          // Tracks remaining time in seconds
 let timerId = null;        // For storing the timer interval ID
 let deadline = null;       // Absolute timestamp (ms) when the timer should hit zero
 let lastWaterBreakMs = 0;  // Keeps track of last water break time in milliseconds
+let waterTimeoutId = null; // setTimeout id for precise water break scheduling
+let nextBreakAtMs = null;  // next scheduled water break time (ms)
 
 function initializeFocusMode() {
     // Getting all the elements I need to control
@@ -67,13 +69,29 @@ function initializeFocusMode() {
         }
     }
 
-    // Main timer function - handles starting the countdown
-    // Added checks to prevent multiple timers and handle empty time
     // Disable/enable inputs while running
     function setInputsEnabled(enabled) {
         [focusHoursInput, focusMinutesInput, focusSecondsInput,
          waterBreakHoursInput, waterBreakMinutesInput, waterBreakSecondsInput,
          waterBreakToggle].forEach(el => { if (el) el.disabled = !enabled; });
+    }
+
+    // Schedule next water break precisely using setTimeout
+    function scheduleWaterBreak(baseNow) {
+        if (!waterBreakToggle.checked) { clearTimeout(waterTimeoutId); waterTimeoutId = null; nextBreakAtMs = null; return; }
+        const wbIntervalSec = calculateWaterBreakInterval();
+        const intervalMs = wbIntervalSec * 1000;
+        if (intervalMs <= 0) { clearTimeout(waterTimeoutId); waterTimeoutId = null; nextBreakAtMs = null; return; }
+        const now = baseNow || Date.now();
+        nextBreakAtMs = now + intervalMs;
+        clearTimeout(waterTimeoutId);
+        const delay = Math.max(0, nextBreakAtMs - Date.now());
+        waterTimeoutId = setTimeout(() => {
+            pauseTimer();
+            lastWaterBreakMs = Date.now();
+            showWaterBreakModal();
+        }, delay);
+        console.log('Water break scheduled in', delay, 'ms');
     }
 
     // Main timer function - handles starting/resuming the countdown (deadline-based)
@@ -96,9 +114,9 @@ function initializeFocusMode() {
         pauseButton.disabled = false;
         statusDisplay.textContent = 'Focus time!';
         setInputsEnabled(false);
-        if (lastWaterBreakMs === 0) {
-            lastWaterBreakMs = Date.now();
-        }
+        if (lastWaterBreakMs === 0) lastWaterBreakMs = Date.now();
+        // schedule or reschedule precise water break
+        scheduleWaterBreak(lastWaterBreakMs);
 
         // Use a shorter tick to improve accuracy, but only update display when whole second changes
         timerId = setInterval(() => {
@@ -111,15 +129,7 @@ function initializeFocusMode() {
                 updateDisplay();
             }
 
-            // Check for water break (skip if interval is zero)
-            const wbIntervalSec = calculateWaterBreakInterval();
-            if (waterBreakToggle.checked && wbIntervalSec > 0 && timeLeft > 0 &&
-                (now - lastWaterBreakMs) >= (wbIntervalSec * 1000)) {
-                pauseTimer();
-                lastWaterBreakMs = now;
-                showWaterBreakModal();
-                return;
-            }
+            // Water break handled via precise setTimeout; no interval check needed
 
             if (remainingMs <= 0) {
                 clearInterval(timerId);
@@ -134,6 +144,7 @@ function initializeFocusMode() {
                     timerEndSound.play().catch(e => console.log('Error playing sound:', e));
                 }
                 timerEndModal.style.display = 'flex';
+                clearTimeout(waterTimeoutId); waterTimeoutId = null; nextBreakAtMs = null;
             }
         }, 250);
     }
@@ -154,6 +165,8 @@ function initializeFocusMode() {
         pauseButton.disabled = true;
         statusDisplay.textContent = 'Paused';
         setInputsEnabled(true);
+        // Pausing cancels scheduled water break; it will be re-scheduled on resume
+        clearTimeout(waterTimeoutId); waterTimeoutId = null; nextBreakAtMs = null;
     }
 
     // Reset timer
@@ -168,6 +181,7 @@ function initializeFocusMode() {
         statusDisplay.textContent = 'Ready to focus';
         lastWaterBreakMs = 0;
         setInputsEnabled(true);
+        clearTimeout(waterTimeoutId); waterTimeoutId = null; nextBreakAtMs = null;
     }
 
     // Event listeners for inputs
@@ -213,6 +227,15 @@ function initializeFocusMode() {
                 // If this was triggered directly by a user event, attempt immediate play inside the handler
                 if (syncInEvent && event) {
                     try {
+                        // WebAudio short beep/silence to unlock on iOS Safari
+                        if (audioCtx && audioCtx.state === 'running') {
+                            const osc = audioCtx.createOscillator();
+                            const gain = audioCtx.createGain();
+                            gain.gain.value = 0.0001; // effectively silent
+                            osc.connect(gain).connect(audioCtx.destination);
+                            osc.start();
+                            osc.stop(audioCtx.currentTime + 0.01);
+                        }
                         if (timerEndSound) { timerEndSound.play(); timerEndSound.pause(); timerEndSound.currentTime = 0; }
                         if (waterBreakSound) { waterBreakSound.play(); waterBreakSound.pause(); waterBreakSound.currentTime = 0; }
                         audioUnlocked = true;
@@ -300,6 +323,15 @@ function initializeFocusMode() {
     // Water break related listeners
     waterBreakToggle.addEventListener('change', () => {
         waterBreakIntervalSetting.style.display = waterBreakToggle.checked ? 'block' : 'none';
+        // reschedule/cancel precise water break if timer is running
+        if (timerId) {
+            if (waterBreakToggle.checked) {
+                lastWaterBreakMs = Date.now();
+                scheduleWaterBreak(lastWaterBreakMs);
+            } else {
+                clearTimeout(waterTimeoutId); waterTimeoutId = null; nextBreakAtMs = null;
+            }
+        }
     });
 
     drankButton.addEventListener('click', () => {
@@ -312,6 +344,8 @@ function initializeFocusMode() {
         lastWaterBreakMs = Date.now();
         deadline = null;
         startTimer();  // Resume the timer
+        // Ensure next break is precisely scheduled from now
+        if (timerId) scheduleWaterBreak(lastWaterBreakMs);
     });
 
     // Close timer end modal and stop sound

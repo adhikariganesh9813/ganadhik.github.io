@@ -109,7 +109,18 @@
         padding: 3px;
     }
     .timer-display .time {
-        font-size: 0.95rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Very small phones (iPhone SE / 360-375px) */
+@media (max-width: 375px) {
+    .timer-display {
+        min-height: 36px;
+        padding: 2px;
+    }
+    .timer-display .time {
+        font-size: 0.85rem;
     }
 }
 
